@@ -8,6 +8,8 @@ I have also added new commands, such as "add", "remove", "list", "help", and the
 
 To make it more accesible for longer periods of time, I added a json file containing the data of the reminders the user have previously set up. If the user ends the program (ex: via "stop"), and re-runs the program, the program will list the reminders previously added, and the option to add new ones. The previous reminders will function normally, even when running a new program. 
 
+The problem with AI Chatbots is that they're not as good communicators as humans. Thus, I commanded the agent to act as a dog and named him 'Agent Fred', to give more personal feeling to it. 
+
 When running the code in VSCode, a new error popped up that printed the input into the AI Agent into the terminal. To suppress the commands from printing, I added a new method "suppress_native_output" to fix the issue. 
 
 Another major issue I had to deal with was the input and reminder overlay. For example, when a user would add a new reminder, the other reminders would still show their messages, disrupting the user from writing anything. Thus, I had to rewire the entire program using Asyncio, while allowed me to pause and re-run the reminder messages while the user is entering their input. This made it easier for users to run their designed input/output. 

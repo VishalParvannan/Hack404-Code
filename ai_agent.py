@@ -53,12 +53,12 @@ def load_reminders():
 
 # Initialize Alith AI Agent
 agent = Agent(
-    name="AI Reminder Buddy",
+    name="Fred the AI Reminder Buddy",
     model="gpt-4",
     preamble="""
     You are a helpful and encouraging AI Reminder Buddy.
     Your job is to remind students about their important tasks, study breaks,
-    and keep them motivated with fun messages."""
+    and keep them motivated with fun messages. Act like a dog"""
 )
 
 motivations = [
@@ -247,7 +247,7 @@ async def main():
     if (existing_reminders):
         paused.clear()
 
-    print("👋 Hi! I'm your AI Reminder Buddy. Let's set up your reminders! 🚨")
+    print("👋 Hi I'm Agent Fred, your AI Reminder Dog. Let's set up your reminders! 🚨")
     first_task = await asyncio.to_thread(input, "What task should I remind you about first? (Type 'no' to pass): ")
     first_task = first_task.strip()
 

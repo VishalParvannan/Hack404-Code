@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hacker Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #4f46e5, #6d28d9);
+            color: white;
+        }
+
+        .navbar {
+            background-color: #4f46e5;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+        }
+
+        #countdown {
+            font-size: 0.85em;          /* increased from 0.6em */
+            background-color: rgba(255, 255, 255, 0.25);
+            padding: 8px 14px;          /* slightly larger padding */
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            min-width: 100px;           /* keep it from shrinking */
+            text-align: center;
+        }
+
+        #deadline-text {
+            font-size: 0.9em;
+            margin-left: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            white-space: nowrap;
+        }
+
+        .navbar a {
+            color: white;
+            background-color: #6366f1;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .navbar a:hover {
+            background-color: #818cf8;
+        }
+
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #profileBtn {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        #profileBtn:hover {
+            background-color: #818cf8;
+        }
+
+        .profile-popup {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: rgba(99, 102, 241, 0.95);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 240px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .profile-popup img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .welcome-heading {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 2.2em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 0 20px 40px;
+        }
+
+        .column {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .column h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .event-item, .announcement-item {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .event-name, .announcement-title {
+            font-weight: bold;
+            font-size: 1.25em;
+            margin-bottom: 6px;
+        }
+
+        .event-time, .event-location, .announcement-content {
+            font-size: 1.05em;
+            color: #e0e0ff;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .navbar h1 {
+                justify-content: center;
+            }
+
+            .navbar a, #profileBtn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .profile-popup {
+                right: 50%;
+                transform: translateX(50%);
+                top: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>
+            🚀 Launchpad
+            <span id="countdown">--:--:--</span>
+            <span id="deadline-text">until submissions close</span>
+          </h1>
+        <div>
+            <a href="/create_announcement">+ Create Announcement</a>
+            <div class="profile-container">
+                <button id="profileBtn">👤 Profile</button>
+                <div id="profilePopup" class="profile-popup">
+                    <img src="https://i.pravatar.cc/80" alt="Profile Picture">
+                    <p><strong>Username:</strong> hacker123</p>
+                    <p><strong>Name:</strong> Vishal Parvannan</p>
+                    <p><strong>Email:</strong> vishal@example.com</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <h1 class="welcome-heading">Welcome Hacker!</h1>
+
+    <div class="dashboard-grid">
+        <!-- Events Column -->
+        <div class="column">
+            <h2>📅 Today's Events</h2>
+            {% for event in events %}
+            <div class="event-item">
+                <div class="event-name">{{ event.name }}</div>
+                <div class="event-time">🕒 {{ event.time }}</div>
+                <div class="event-location">📍 {{ event.location }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Announcements Column -->
+        <div class="column">
+            <h2>📢 Announcements</h2>
+            {% for announcement in announcements %}
+            <div class="announcement-item">
+                <div class="announcement-title">{{ announcement.title }}</div>
+                <div class="announcement-content">{{ announcement.content }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Hackathon Info Column -->
+        <div class="column">
+            <h2>ℹ️ Hackathon Info</h2>
+            <h3>Judging Criteria</h3>
+            <ul>
+                <li>Creativity & originality</li>
+                <li>Technical difficulty</li>
+                <li>Functionality</li>
+                <li>Presentation</li>
+            </ul>
+
+            <h3>Submission Deadline</h3>
+            <p>⏰ Sunday, 3:00 PM</p>
+
+            <h3>Need Help?</h3>
+            <p>Ask mentors in the <strong>#help</strong> Discord channel or visit the mentor desk.</p>
+
+            <h3>Team Tips</h3>
+            <ul>
+                <li>Over-communicate!</li>
+                <li>Use a shared doc or GitHub repo</li>
+                <li>Divide and conquer</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Countdown timer logic
+        const countdownSeconds = 8 * 60 * 60; // Set your countdown here (8 hours)
+        let remainingTime = countdownSeconds;
+
+        function formatTime(seconds) {
+            const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(seconds % 60).padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        const countdownEl = document.getElementById("countdown");
+        countdownEl.textContent = formatTime(remainingTime);
+
+        const timer = setInterval(() => {
+            remainingTime--;
+            if (remainingTime < 0) {
+                clearInterval(timer);
+                countdownEl.textContent = "00:00:00";
+            } else {
+                countdownEl.textContent = formatTime(remainingTime);
+            }
+        }, 1000);
+
+        // Profile popup logic
+        const profileBtn = document.getElementById('profileBtn');
+        const profilePopup = document.getElementById('profilePopup');
+
+        profileBtn.addEventListener('click', () => {
+            profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+                profilePopup.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

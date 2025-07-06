@@ -33,13 +33,13 @@
         }
 
         #countdown {
-            font-size: 0.85em;          /* increased from 0.6em */
+            font-size: 0.85em;
             background-color: rgba(255, 255, 255, 0.25);
-            padding: 8px 14px;          /* slightly larger padding */
+            padding: 8px 14px;
             border-radius: 10px;
             font-weight: 600;
             letter-spacing: 1.2px;
-            min-width: 100px;           /* keep it from shrinking */
+            min-width: 100px;
             text-align: center;
         }
 
@@ -65,12 +65,12 @@
             background-color: #818cf8;
         }
 
-        .profile-container {
+        .profile-container, .qr-container {
             position: relative;
             display: inline-block;
         }
 
-        #profileBtn {
+        #profileBtn, #qrBtn {
             background-color: #6366f1;
             color: white;
             border: none;
@@ -81,30 +81,38 @@
             margin-left: 10px;
         }
 
-        #profileBtn:hover {
+        #profileBtn:hover, #qrBtn:hover {
             background-color: #818cf8;
         }
 
-        .profile-popup {
+        .profile-popup, .qr-popup {
             display: none;
             position: absolute;
-            right: 0;
             top: 45px;
             background-color: rgba(99, 102, 241, 0.95);
             color: white;
             padding: 15px;
             border-radius: 10px;
-            width: 240px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 100;
             font-size: 0.95em;
             text-align: center;
         }
 
-        .profile-popup img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        .profile-popup {
+            right: 0;
+            width: 240px;
+        }
+
+        .qr-popup {
+            right: 130px;
+            width: 180px;
+        }
+
+        .profile-popup img, .qr-popup img {
+            width: 140px;
+            height: 140px;
+            border-radius: 10px;
             margin-bottom: 10px;
         }
 
@@ -169,14 +177,15 @@
 
             .navbar h1 {
                 justify-content: center;
+                flex-wrap: wrap;
             }
 
-            .navbar a, #profileBtn {
+            .navbar a, #profileBtn, #qrBtn {
                 margin-left: 0;
                 margin-top: 10px;
             }
 
-            .profile-popup {
+            .profile-popup, .qr-popup {
                 right: 50%;
                 transform: translateX(50%);
                 top: 55px;
@@ -190,9 +199,20 @@
             🚀 Launchpad
             <span id="countdown">--:--:--</span>
             <span id="deadline-text">until submissions close</span>
-          </h1>
+        </h1>
         <div>
             <a href="/create_announcement">+ Create Announcement</a>
+
+            <!-- QR Button -->
+            <div class="qr-container">
+                <button id="qrBtn">🔳 QR Code</button>
+                <div id="qrPopup" class="qr-popup">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://launchpad.example.com" alt="QR Code">
+                    <p>Scan to access Launchpad</p>
+                </div>
+            </div>
+
+            <!-- Profile Button -->
             <div class="profile-container">
                 <button id="profileBtn">👤 Profile</button>
                 <div id="profilePopup" class="profile-popup">
@@ -258,31 +278,31 @@
     </div>
 
     <script>
-        // Countdown timer logic
-        const countdownSeconds = 8 * 60 * 60; // Set your countdown here (8 hours)
-        let remainingTime = countdownSeconds;
+        // Countdown to Sunday July 6, 2025, 9:00 AM EDT
+        const deadline = new Date("July 6, 2025 09:00:00 EDT").getTime();
+        const countdownEl = document.getElementById("countdown");
 
-        function formatTime(seconds) {
-            const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
-            const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-            const secs = String(seconds % 60).padStart(2, '0');
-            return `${hrs}:${mins}:${secs}`;
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                countdownEl.textContent = "00:00:00";
+                clearInterval(timer);
+                return;
+            }
+
+            const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+            const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+            const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+            countdownEl.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        const countdownEl = document.getElementById("countdown");
-        countdownEl.textContent = formatTime(remainingTime);
+        updateCountdown();
+        const timer = setInterval(updateCountdown, 1000);
 
-        const timer = setInterval(() => {
-            remainingTime--;
-            if (remainingTime < 0) {
-                clearInterval(timer);
-                countdownEl.textContent = "00:00:00";
-            } else {
-                countdownEl.textContent = formatTime(remainingTime);
-            }
-        }, 1000);
-
-        // Profile popup logic
+        // Profile popup
         const profileBtn = document.getElementById('profileBtn');
         const profilePopup = document.getElementById('profilePopup');
 
@@ -290,9 +310,21 @@
             profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
         });
 
+        // QR popup
+        const qrBtn = document.getElementById('qrBtn');
+        const qrPopup = document.getElementById('qrPopup');
+
+        qrBtn.addEventListener('click', () => {
+            qrPopup.style.display = qrPopup.style.display === "block" ? "none" : "block";
+        });
+
+        // Close popups if clicked outside
         window.addEventListener('click', (e) => {
             if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
                 profilePopup.style.display = "none";
+            }
+            if (!qrBtn.contains(e.target) && !qrPopup.contains(e.target)) {
+                qrPopup.style.display = "none";
             }
         });
     </script>
